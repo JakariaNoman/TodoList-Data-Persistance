@@ -11,6 +11,8 @@ import CoreData
 class TodoListViewController: UITableViewController {
 
     var itemArray = [Item]()
+    var fetchedResultsController: NSFetchedResultsController<Item>!
+    
     var didSelectCategory: Category? {
         didSet {
             loadData()
@@ -41,14 +43,35 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        /* Delete a row from todo List
-              context.delete(itemArray[indexPath.row])
-              itemArray.remove(at: indexPath.row)
-         */
+        //Delete a row from todo List
         
-        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        tableView.deselectRow(at: indexPath, animated: true)
-        saveData()
+        let alertController = UIAlertController(
+            title: "Delete ToDoList Item",
+            message: "",
+            preferredStyle: .alert
+        )
+        
+        let okAction =  UIAlertAction(
+            title: "Delete",
+            style: .default) { [weak self] action in
+                guard let self else { return }
+                context.delete(itemArray[indexPath.row])
+                itemArray.remove(at: indexPath.row)
+                saveData()
+            }
+        
+        let cancelAction =  UIAlertAction(
+            title: "No",
+            style: .default) { [weak self] action in
+                guard let self else { return }
+                itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+                tableView.deselectRow(at: indexPath, animated: true)
+                saveData()
+            }
+        
+        alertController.addAction(okAction)
+        alertController.addAction(cancelAction)
+        self.present(alertController, animated: true)
     }
     
    //MARK : ADD New Items

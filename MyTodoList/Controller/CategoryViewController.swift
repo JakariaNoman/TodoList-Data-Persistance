@@ -10,7 +10,6 @@ import CoreData
 
 class CategoryViewController: UITableViewController {
     var category = [Category]()
-    var jakaria = 10
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
@@ -28,6 +27,36 @@ class CategoryViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         cell.textLabel?.text = category[indexPath.row].name
         return cell
+    }
+// MARK: - Cell Delete or Perform Segue
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let alertController = UIAlertController(
+            title: "Delete ToDoList Category",
+            message: "",
+            preferredStyle: .alert
+        )
+        
+        let okAction =  UIAlertAction(
+            title: "Delete",
+            style: .default) { [weak self] action in
+                guard let self else { return }
+                context.delete(category[indexPath.row])
+                category.remove(at: indexPath.row)
+                saveCategories()
+            }
+        
+        let cancelAction =  UIAlertAction(
+            title: "No",
+            style: .default) { [weak self] action in
+                guard let self else { return }
+                performSegue(withIdentifier: "goToItem", sender: self)
+            }
+        
+        alertController.addAction(okAction)
+        alertController.addAction(cancelAction)
+        self.present(alertController, animated: true)
     }
     
 // MARK: - Data Manipulation Methods
@@ -52,9 +81,9 @@ class CategoryViewController: UITableViewController {
     }
     
 // MARK: - TableView Delegate Methods
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "goToItem", sender: self)
-    }
+//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        performSegue(withIdentifier: "goToItem", sender: self)
+//    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! TodoListViewController
