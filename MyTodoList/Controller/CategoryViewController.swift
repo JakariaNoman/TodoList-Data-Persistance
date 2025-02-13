@@ -10,6 +10,7 @@ import CoreData
 
 class CategoryViewController: UITableViewController {
     var category = [Category]()
+    var jakaria = 10
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
